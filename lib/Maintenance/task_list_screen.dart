@@ -1,65 +1,68 @@
 import 'package:flutter/material.dart';
-import 'package:ggt_assignment/Screens/dashboard.dart';
 import 'package:provider/provider.dart';
-import 'task_provider.dart';
-import 'add_task_screen.dart';
-import 'package:ggt_assignment/Screens/dashboard.dart'; // Import the Dashboard widget
+import 'package:ggt_assignment/Maintenance/class_task.dart';
+import 'package:ggt_assignment/Maintenance/add_edit_task_screen.dart';
 
 class TaskListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final taskProvider = Provider.of<TaskProvider>(context);
-    print("Building TaskListScreen with ${taskProvider.tasks.length} tasks"); // Debugging line
     return Scaffold(
       appBar: AppBar(
+        title: Text('Maintenance Schedule'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => Dashboard()),
-            );
+            Navigator.pop(context);
           },
         ),
-        title: Text('Maintenance Schedule'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              Navigator.of(context).pushNamed(AddTaskScreen.routeName);
-            },
-          ),
-        ],
       ),
-      body: taskProvider.tasks.isEmpty
-          ? Center(
-              child: Text('No tasks added yet!'),
-            )
-          : ListView.builder(
-              itemCount: taskProvider.tasks.length,
-              itemBuilder: (ctx, index) {
-                final task = taskProvider.tasks[index];
-                return ListTile(
-                  title: Text(task.name),
-                  subtitle: Text(task.isMileageBased
-                      ? '${task.mileage} km'
-                      : '${task.date.toLocal()}'),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      taskProvider.deleteTask(task.id);
-                    },
-                  ),
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => AddTaskScreen(
-                        isEdit: true,
-                        taskId: task.id,
-                      ),
-                    ));
-                  },
-                );
-              },
+      body: Consumer<Task>(
+        builder: (context, provider, child) {
+          return ListView.builder(
+            itemCount: provider.tasks.length,
+            itemBuilder: (context, index) {
+              final task = provider.tasks[index];
+              return ListTile(
+                title: Text(task.task),
+                subtitle: Text('Due: ${task.dueDate} - Mileage: ${task.mileage}'),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddEditTaskScreen(task: task),
+                          ),
+                        );
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        provider.deleteTask(task.taskID);
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddEditTaskScreen(),
             ),
+          );
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 }
