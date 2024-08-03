@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:ggt_assignment/Maintenance/maintenan_sched.dart';
+import 'package:ggt_assignment/Maintenance/task_list_screen.dart';
 
 class Dashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('CarMate Dashboard'),
+        title: Text('Dashboard'),
         actions: [
           IconButton(
             icon: Icon(Icons.account_circle),
@@ -23,44 +25,26 @@ class Dashboard extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            SearchBar(),
-            SizedBox(height: 20),
-            VehicleSummary(
-              make: 'Toyota',
-              model: 'Camry',
-              year: 2020,
-              mileage: 15000,
-            ),
-            SizedBox(height: 20),
-            UpcomingMaintenanceTasks(),
-            SizedBox(height: 20),
-            QuickAccessFeatures(),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SearchBar(),
+              SizedBox(height: 20),
+              VehicleSummary(
+                make: 'Toyota',
+                model: 'Camry',
+                year: 2020,
+                mileage: 15000,
+              ),
+              SizedBox(height: 20),
+              UpcomingMaintenanceTasks(),
+              SizedBox(height: 20),
+              QuickAccessFeatures(),
+            ],
+          ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.directions_car),
-            label: 'My Cars',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Alerts',
-          ),
-        ],
-        currentIndex: 0,
-        selectedItemColor: Colors.blue,
-        onTap: (index) {
-          // Handle bottom navigation bar tap
-        },
-      ),
+      bottomNavigationBar: CustomBottomNavigationBar(),
     );
   }
 }
@@ -183,14 +167,17 @@ class MaintenanceTaskItem extends StatelessWidget {
 class QuickAccessFeatures extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Column(
       children: [
         QuickAccessButton(
-          icon: Icons.local_gas_station,
-          label: 'Fuel Log',
+          icon: Icons.newspaper_rounded,
+          label: 'Maintenance schedule',
           onPressed: () {
-            // Navigate to fuel log
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => TaskListScreen(),
+              ),
+            );
           },
         ),
         QuickAccessButton(
@@ -225,14 +212,44 @@ class QuickAccessButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      child: Column(
-        children: [
-          Icon(icon),
-          Text(label),
-        ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        child: Column(
+          children: [
+            Icon(icon),
+            Text(label),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class CustomBottomNavigationBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.directions_car),
+          label: 'My Cars',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.notifications),
+          label: 'Alerts',
+        ),
+      ],
+      currentIndex: 0,
+      selectedItemColor: Colors.blue,
+      onTap: (index) {
+        // Handle bottom navigation bar tap
+      },
     );
   }
 }
