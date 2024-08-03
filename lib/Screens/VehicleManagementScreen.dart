@@ -15,6 +15,8 @@ class Vehicle {
 }
 
 class VehicleManagementScreen extends StatefulWidget {
+  const VehicleManagementScreen({super.key});
+
   @override
   VehicleManagementScreenState createState() => VehicleManagementScreenState();
 }
@@ -32,7 +34,7 @@ class VehicleManagementScreenState extends State<VehicleManagementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Vehicle Management'),
+        title: const Text('Vehicle Management'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -44,7 +46,7 @@ class VehicleManagementScreenState extends State<VehicleManagementScreen> {
                 children: [
                   TextFormField(
                     controller: _makeController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Make',
                       border: OutlineInputBorder(),
                     ),
@@ -55,10 +57,10 @@ class VehicleManagementScreenState extends State<VehicleManagementScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   TextFormField(
                     controller: _modelController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Model',
                       border: OutlineInputBorder(),
                     ),
@@ -69,10 +71,10 @@ class VehicleManagementScreenState extends State<VehicleManagementScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   TextFormField(
                     controller: _yearController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Year',
                       border: OutlineInputBorder(),
                     ),
@@ -83,10 +85,10 @@ class VehicleManagementScreenState extends State<VehicleManagementScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   TextFormField(
                     controller: _mileageController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Mileage',
                       border: OutlineInputBorder(),
                     ),
@@ -97,7 +99,7 @@ class VehicleManagementScreenState extends State<VehicleManagementScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
@@ -125,12 +127,12 @@ class VehicleManagementScreenState extends State<VehicleManagementScreen> {
                         });
                       }
                     },
-                    child: Text('Save Vehicle'),
+                    child: const Text('Save Vehicle'),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
                 itemCount: vehicles.length,
@@ -143,7 +145,7 @@ class VehicleManagementScreenState extends State<VehicleManagementScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.edit),
+                            icon: const Icon(Icons.edit),
                             onPressed: () {
                               setState(() {
                                 _makeController.text = vehicles[index].make;
@@ -155,7 +157,7 @@ class VehicleManagementScreenState extends State<VehicleManagementScreen> {
                             },
                           ),
                           IconButton(
-                            icon: Icon(Icons.delete),
+                            icon: const Icon(Icons.delete),
                             onPressed: () {
                               setState(() {
                                 vehicles.removeAt(index);

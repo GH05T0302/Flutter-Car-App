@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ggt_assignment/vehicleProvider.dart';
+import 'package:ggt_assignment/Screens/dashboard.dart';
 
 class VehicleListScreen extends StatelessWidget {
+  const VehicleListScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Vehicle List'),
+        title: const Text('Vehicle List'),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: () {
               _showAddVehicleDialog(context);
             },
@@ -22,7 +25,7 @@ class VehicleListScreen extends StatelessWidget {
         child: Consumer<VehicleProvider>(
           builder: (context, vehicleProvider, child) {
             return vehicleProvider.vehicles.isEmpty
-                ? Center(
+                ? const Center(
                     child: Text('No vehicles added'),
                   )
                 : ListView.builder(
@@ -36,13 +39,13 @@ class VehicleListScreen extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                icon: Icon(Icons.edit),
+                                icon: const Icon(Icons.edit),
                                 onPressed: () {
                                   _showEditVehicleDialog(context, vehicleProvider, index);
                                 },
                               ),
                               IconButton(
-                                icon: Icon(Icons.delete),
+                                icon: const Icon(Icons.delete),
                                 onPressed: () {
                                   _showDeleteVehicleDialog(context, vehicleProvider, index);
                                 },
@@ -60,58 +63,58 @@ class VehicleListScreen extends StatelessWidget {
   }
 
   void _showAddVehicleDialog(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
-    String? _make, _model, _year, _mileage;
+    final formKey = GlobalKey<FormState>();
+    String? make, model, year, mileage;
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Add Vehicle'),
+          title: const Text('Add Vehicle'),
           content: Form(
-            key: _formKey,
+            key: formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Make'),
+                  decoration: const InputDecoration(labelText: 'Make'),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
                       return 'Please enter make';
                     }
                     return null;
                   },
-                  onSaved: (value) => _make = value,
+                  onSaved: (value) => make = value,
                 ),
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Model'),
+                  decoration: const InputDecoration(labelText: 'Model'),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
                       return 'Please enter model';
                     }
                     return null;
                   },
-                  onSaved: (value) => _model = value,
+                  onSaved: (value) => model = value,
                 ),
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Year'),
+                  decoration: const InputDecoration(labelText: 'Year'),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
                       return 'Please enter year';
                     }
                     return null;
                   },
-                  onSaved: (value) => _year = value,
+                  onSaved: (value) => year = value,
                 ),
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Mileage'),
+                  decoration: const InputDecoration(labelText: 'Mileage'),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
                       return 'Please enter mileage';
                     }
                     return null;
                   },
-                  onSaved: (value) => _mileage = value,
+                  onSaved: (value) => mileage = value,
                 ),
               ],
             ),
@@ -121,24 +124,24 @@ class VehicleListScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
+                if (formKey.currentState!.validate()) {
+                  formKey.currentState!.save();
                   Provider.of<VehicleProvider>(context, listen: false).addVehicle(
                     Vehicle(
-                      make: _make!,
-                      model: _model!,
-                      year: int.parse(_year!),
-                      mileage: int.parse(_mileage!),
+                      make: make!,
+                      model: model!,
+                      year: int.parse(year!),
+                      mileage: int.parse(mileage!),
                     ),
                   );
                   Navigator.of(context).pop();
                 }
               },
-              child: Text('Add'),
+              child: const Text('Add'),
             ),
           ],
         );
@@ -147,65 +150,65 @@ class VehicleListScreen extends StatelessWidget {
   }
 
   void _showEditVehicleDialog(BuildContext context, VehicleProvider vehicleProvider, int index) {
-    final _formKey = GlobalKey<FormState>();
-    String? _make = vehicleProvider.vehicles[index].make;
-    String? _model = vehicleProvider.vehicles[index].model;
-    String? _year = vehicleProvider.vehicles[index].year.toString();
-    String? _mileage = vehicleProvider.vehicles[index].mileage.toString();
+    final formKey = GlobalKey<FormState>();
+    String? make = vehicleProvider.vehicles[index].make;
+    String? model = vehicleProvider.vehicles[index].model;
+    String? year = vehicleProvider.vehicles[index].year.toString();
+    String? mileage = vehicleProvider.vehicles[index].mileage.toString();
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Edit Vehicle'),
+          title: const Text('Edit Vehicle'),
           content: Form(
-            key: _formKey,
+            key: formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextFormField(
-                  initialValue: _make,
-                  decoration: InputDecoration(labelText: 'Make'),
+                  initialValue: make,
+                  decoration: const InputDecoration(labelText: 'Make'),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
                       return 'Please enter make';
                     }
                     return null;
                   },
-                  onSaved: (value) => _make = value,
+                  onSaved: (value) => make = value,
                 ),
                 TextFormField(
-                  initialValue: _model,
-                  decoration: InputDecoration(labelText: 'Model'),
+                  initialValue: model,
+                  decoration: const InputDecoration(labelText: 'Model'),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
                       return 'Please enter model';
                     }
                     return null;
                   },
-                  onSaved: (value) => _model = value,
+                  onSaved: (value) => model = value,
                 ),
                 TextFormField(
-                  initialValue: _year,
-                  decoration: InputDecoration(labelText: 'Year'),
+                  initialValue: year,
+                  decoration: const InputDecoration(labelText: 'Year'),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
                       return 'Please enter year';
                     }
                     return null;
                   },
-                  onSaved: (value) => _year = value,
+                  onSaved: (value) => year = value,
                 ),
                 TextFormField(
-                  initialValue: _mileage,
-                  decoration: InputDecoration(labelText: 'Mileage'),
+                  initialValue: mileage,
+                  decoration: const InputDecoration(labelText: 'Mileage'),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
                       return 'Please enter mileage';
                     }
                     return null;
                   },
-                  onSaved: (value) => _mileage = value,
+                  onSaved: (value) => mileage = value,
                 ),
               ],
             ),
@@ -215,25 +218,25 @@ class VehicleListScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
+                if (formKey.currentState!.validate()) {
+                  formKey.currentState!.save();
                   vehicleProvider.updateVehicle(
                     index,
                     Vehicle(
-                      make: _make!,
-                      model: _model!,
-                      year: int.parse(_year!),
-                      mileage: int.parse(_mileage!),
+                      make: make!,
+                      model: model!,
+                      year: int.parse(year!),
+                      mileage: int.parse(mileage!),
                     ),
                   );
                   Navigator.of(context).pop();
                 }
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );
@@ -246,21 +249,21 @@ class VehicleListScreen extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Delete Vehicle'),
-          content: Text('Are you sure you want to delete this vehicle?'),
+          title: const Text('Delete Vehicle'),
+          content: const Text('Are you sure you want to delete this vehicle?'),
           actions: [
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () {
                 vehicleProvider.removeVehicle(index);
                 Navigator.of(context).pop();
               },
-              child: Text('Delete'),
+              child: const Text('Delete'),
             ),
           ],
         );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ggt_assignment/Maintenance/maintenan_sched.dart';
 import 'package:ggt_assignment/Maintenance/task_list_screen.dart';
+import 'package:ggt_assignment/Screens/vehicleList.dart';
+
 
 class Dashboard extends StatelessWidget {
   @override
@@ -245,10 +247,26 @@ class CustomBottomNavigationBar extends StatelessWidget {
           label: 'Alerts',
         ),
       ],
-      currentIndex: 0,
+      currentIndex: 0, // This should ideally be managed by a stateful widget
       selectedItemColor: Colors.blue,
       onTap: (index) {
-        // Handle bottom navigation bar tap
+        switch (index) {
+          case 0:
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Dashboard()),
+            );
+            break;
+          case 1:
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => VehicleListScreen()),
+            );
+            break;
+          case 2:
+            // Add navigation for Alerts if needed
+            break;
+        }
       },
     );
   }
