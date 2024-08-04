@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ggt_assignment/Firebase_Auth/auth_provider.dart';
+import 'package:ggt_assignment/Maintenance/class_task.dart';
+import 'package:ggt_assignment/Maintenance/task_list_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -45,6 +47,9 @@ class MyApp extends StatelessWidget {
             ChangeNotifierProvider(
               create: (_) => VehicleProvider(userEmail),
             ),
+            ChangeNotifierProvider(
+              create: (_) => Task(),  // Add the TaskProvider
+            ),
           ],
           child: MaterialApp(
             theme: theme,
@@ -53,6 +58,7 @@ class MyApp extends StatelessWidget {
               '/': (context) => LoginPage(),
               '/Dashboard': (context) => Dashboard(),
               '/VehicleList': (context) => VehicleListScreen(),
+              '/TaskList': (context) => TaskListScreen(),  // Add the TaskList route
             },
           ),
         );
