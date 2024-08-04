@@ -109,7 +109,7 @@ class VehicleSummary extends StatelessWidget {
           children: [
             Text(
               'Vehicle Summary',
-              style: Theme.of(context).textTheme.headline6?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
             ),
             SizedBox(height: 10),
             Text('Make: $make', style: textStyle),
