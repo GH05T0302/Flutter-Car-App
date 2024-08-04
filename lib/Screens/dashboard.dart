@@ -25,12 +25,6 @@ class Dashboard extends StatelessWidget {
               PopupMenuItem<int>(value: 1, child: Text('Settings')),
             ],
           ),
-          IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: () {
-              // Open menu
-            },
-          ),
         ],
       ),
       body: Padding(
