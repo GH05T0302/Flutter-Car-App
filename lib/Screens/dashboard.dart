@@ -218,20 +218,6 @@ class QuickAccessFeatures extends StatelessWidget {
             );
           },
         ),
-        QuickAccessButton(
-          icon: Icons.local_gas_station,
-          label: 'Fuel',
-          onPressed: () {
-            // Navigate to fuel
-          },
-        ),
-        QuickAccessButton(
-          icon: Icons.attach_money,
-          label: 'Expenses',
-          onPressed: () {
-            // Navigate to expenses
-          },
-        ),
       ],
     );
   }
