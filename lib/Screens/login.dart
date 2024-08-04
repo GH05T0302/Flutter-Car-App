@@ -4,9 +4,9 @@ import 'package:ggt_assignment/Firebase_Auth/firebase_auth_services.dart';
 import 'package:ggt_assignment/Screens/SignUp.dart';
 import 'package:ggt_assignment/widgets/container_widget.dart';
 import 'package:ggt_assignment/toast.dart';
+import 'package:ggt_assignment/widgets/customTextStyle.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -31,6 +31,14 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final textStyle = getCustomTextStyle(context);
+    final buttonTextStyle = TextStyle(color: Theme.of(context).colorScheme.onPrimary);
+    final buttonBackgroundColor = Theme.of(context).colorScheme.primary;
+    final googleButtonBackgroundColor = Colors.red;
+    final googleButtonTextStyle = TextStyle(color: Colors.white);
+    final linkTextStyle = TextStyle(color: Theme.of(context).colorScheme.primary);
+    final titleTextStyle = Theme.of(context).textTheme.headline5?.copyWith(color: Theme.of(context).colorScheme.onSurface);
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -42,9 +50,9 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
+              Text(
                 "Login",
-                style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
+                style: titleTextStyle,
               ),
               const SizedBox(
                 height: 30,
@@ -73,62 +81,62 @@ class _LoginPageState extends State<LoginPage> {
                   width: double.infinity,
                   height: 45,
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: buttonBackgroundColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
-                    child: _isSigning ? const CircularProgressIndicator(
-                      color: Colors.white,) : const Text(
-                      "Login",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: _isSigning
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : Text(
+                            "Login",
+                            style: buttonTextStyle,
+                          ),
                   ),
                 ),
               ),
-              const SizedBox(height: 10,),
+              const SizedBox(
+                height: 10,
+              ),
               GestureDetector(
                 onTap: () {
                   _signInWithGoogle();
-
                 },
                 child: Container(
                   width: double.infinity,
                   height: 45,
                   decoration: BoxDecoration(
-                    color: Colors.red,
+                    color: googleButtonBackgroundColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(FontAwesomeIcons.google, color: Colors.white,),
-                        SizedBox(width: 5,),
+                        const Icon(
+                          FontAwesomeIcons.google,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
                         Text(
                           "Sign in with Google",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: googleButtonTextStyle,
                         ),
                       ],
                     ),
                   ),
                 ),
               ),
-
-
               const SizedBox(
                 height: 20,
               ),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Don't have an account?"),
+                  Text("Don't have an account?", style: textStyle),
                   const SizedBox(
                     width: 5,
                   ),
@@ -136,16 +144,15 @@ class _LoginPageState extends State<LoginPage> {
                     onTap: () {
                       Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (context) => const SignUpPage()),
-                            (route) => false,
+                        MaterialPageRoute(
+                          builder: (context) => const SignUpPage(),
+                        ),
+                        (route) => false,
                       );
                     },
-                    child: const Text(
+                    child: Text(
                       "Sign Up",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: linkTextStyle.copyWith(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
@@ -175,22 +182,18 @@ class _LoginPageState extends State<LoginPage> {
       showToast(message: "User is successfully signed in");
       Navigator.pushNamed(context, "/Dashboard");
     } else {
-      showToast(message: "some error occured");
+      showToast(message: "some error occurred");
     }
   }
 
-
-  _signInWithGoogle()async{
-
+  _signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
 
     try {
-
       final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
 
-      if(googleSignInAccount != null ){
-        final GoogleSignInAuthentication googleSignInAuthentication = await
-        googleSignInAccount.authentication;
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
 
         final AuthCredential credential = GoogleAuthProvider.credential(
           idToken: googleSignInAuthentication.idToken,
@@ -200,13 +203,8 @@ class _LoginPageState extends State<LoginPage> {
         await _firebaseAuth.signInWithCredential(credential);
         Navigator.pushNamed(context, "/Dashboard");
       }
-
-    }catch(e) {
-showToast(message: "some error occurred $e");
+    } catch (e) {
+      showToast(message: "some error occurred $e");
     }
-
-
   }
-
-
 }
