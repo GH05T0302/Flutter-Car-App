@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ggt_assignment/Firebase_Auth/auth_provider.dart';
-import 'package:ggt_assignment/Maintenance/class_task.dart';
+import 'package:ggt_assignment/Maintenance/maintenance_provider.dart';
 import 'package:ggt_assignment/Maintenance/task_list_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,7 +23,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   
-
   runApp(
     MultiProvider(
       providers: [
@@ -48,7 +47,7 @@ class MyApp extends StatelessWidget {
               create: (_) => VehicleProvider(userEmail),
             ),
             ChangeNotifierProvider(
-              create: (_) => Task(),  // Add the TaskProvider
+              create: (_) => MaintenanceProvider(userEmail),  // Add the MaintenanceProvider
             ),
           ],
           child: MaterialApp(
