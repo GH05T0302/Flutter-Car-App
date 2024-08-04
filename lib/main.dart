@@ -9,6 +9,8 @@ import 'package:ggt_assignment/Screens/vehicleList.dart';
 import 'package:ggt_assignment/Screens/login.dart';
 import 'package:ggt_assignment/Screens/dashboard.dart';
 import 'package:ggt_assignment/vehicleProvider.dart';
+import 'package:ggt_assignment/History/service_provider.dart';
+import 'package:ggt_assignment/History/service_log_screen.dart';
 
 final theme = ThemeData(
   useMaterial3: true,
@@ -47,7 +49,13 @@ class MyApp extends StatelessWidget {
               create: (_) => VehicleProvider(userEmail),
             ),
             ChangeNotifierProvider(
-              create: (_) => MaintenanceProvider(userEmail),  // Add the MaintenanceProvider
+              create: (_) => ServiceProvider(userEmail),
+            ),
+            ChangeNotifierProvider(
+              create: (context) => MaintenanceProvider(
+                userEmail,
+                Provider.of<ServiceProvider>(context, listen: false),
+              ),
             ),
           ],
           child: MaterialApp(
@@ -57,7 +65,8 @@ class MyApp extends StatelessWidget {
               '/': (context) => LoginPage(),
               '/Dashboard': (context) => Dashboard(),
               '/VehicleList': (context) => VehicleListScreen(),
-              '/TaskList': (context) => TaskListScreen(),  // Add the TaskList route
+              '/TaskList': (context) => TaskListScreen(),
+              '/ServiceLog': (context) => ServiceLogScreen(),
             },
           ),
         );
