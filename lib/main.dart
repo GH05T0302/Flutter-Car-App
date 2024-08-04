@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:ggt_assignment/themeProvider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_core/firebase_core.dart';
-
 import 'package:ggt_assignment/Firebase_Auth/auth_provider.dart';
 import 'package:ggt_assignment/Maintenance/maintenance_provider.dart';
 import 'package:ggt_assignment/Maintenance/task_list_screen.dart';
@@ -13,7 +12,9 @@ import 'package:ggt_assignment/Screens/dashboard.dart';
 import 'package:ggt_assignment/vehicleProvider.dart';
 import 'package:ggt_assignment/History/service_provider.dart';
 import 'package:ggt_assignment/History/service_log_screen.dart';
-
+import 'package:ggt_assignment/reminder/reminder_provider.dart';
+import 'package:ggt_assignment/reminder/reminder_screen.dart';
+import 'package:ggt_assignment/themeProvider.dart';
 
 final lightTheme = ThemeData(
   useMaterial3: true,
@@ -33,10 +34,17 @@ final darkTheme = ThemeData(
   textTheme: GoogleFonts.latoTextTheme(),
 );
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print('Handling a background message: ${message.messageId}');
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   runApp(
     MultiProvider(
       providers: [
@@ -72,6 +80,9 @@ class MyApp extends StatelessWidget {
                 Provider.of<ServiceProvider>(context, listen: false),
               ),
             ),
+            ChangeNotifierProvider(
+              create: (context) => ReminderProvider(userEmail),
+            ),
           ],
           child: MaterialApp(
             themeMode: themeProvider.themeMode,
@@ -84,6 +95,7 @@ class MyApp extends StatelessWidget {
               '/VehicleList': (context) => VehicleListScreen(),
               '/TaskList': (context) => TaskListScreen(),
               '/ServiceLog': (context) => ServiceLogScreen(),
+              '/Reminders': (context) => ReminderScreen(),
             },
           ),
         );

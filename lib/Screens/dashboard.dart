@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:ggt_assignment/Maintenance/task_list_screen.dart';
 import 'package:ggt_assignment/Screens/vehicleList.dart';
 import 'package:ggt_assignment/History/service_log_screen.dart';
+import 'package:ggt_assignment/reminder/reminder_screen.dart';
 
 class Dashboard extends StatelessWidget {
   @override
@@ -84,6 +85,7 @@ class SearchBar extends StatelessWidget {
     );
   }
 }
+
 class VehicleSummary extends StatelessWidget {
   final String make;
   final String model;
@@ -220,6 +222,13 @@ class QuickAccessFeatures extends StatelessWidget {
           },
         ),
         QuickAccessButton(
+          icon: Icons.local_gas_station,
+          label: 'Fuel',
+          onPressed: () {
+            // Navigate to fuel
+          },
+        ),
+        QuickAccessButton(
           icon: Icons.attach_money,
           label: 'Expenses',
           onPressed: () {
@@ -294,7 +303,10 @@ class CustomBottomNavigationBar extends StatelessWidget {
             );
             break;
           case 2:
-            // Add navigation for Alerts if needed
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ReminderScreen()),
+            );
             break;
         }
       },
