@@ -36,7 +36,7 @@ class _SignUpPageState extends State<SignUpPage> {
     final buttonTextStyle = TextStyle(color: Theme.of(context).colorScheme.onPrimary);
     final buttonBackgroundColor = Theme.of(context).colorScheme.primary;
     final linkTextStyle = TextStyle(color: Theme.of(context).colorScheme.primary);
-    final titleTextStyle = Theme.of(context).textTheme.headline5?.copyWith(color: Theme.of(context).colorScheme.onSurface);
+    final titleTextStyle = Theme.of(context).textTheme.headlineSmall?.copyWith(color: Theme.of(context).colorScheme.onSurface);
 
     return Scaffold(
       appBar: AppBar(

@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
     final googleButtonBackgroundColor = Colors.red;
     final googleButtonTextStyle = TextStyle(color: Colors.white);
     final linkTextStyle = TextStyle(color: Theme.of(context).colorScheme.primary);
-    final titleTextStyle = Theme.of(context).textTheme.headline5?.copyWith(color: Theme.of(context).colorScheme.onSurface);
+    final titleTextStyle = Theme.of(context).textTheme.headlineSmall?.copyWith(color: Theme.of(context).colorScheme.onSurface);
 
     return Scaffold(
       appBar: AppBar(
