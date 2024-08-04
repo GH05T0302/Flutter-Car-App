@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ggt_assignment/Maintenance/class_task.dart';
+import 'package:ggt_assignment/Maintenance/maintenance_provider.dart';
 import 'package:ggt_assignment/Maintenance/add_edit_task_screen.dart';
+import 'package:intl/intl.dart'; // Import the intl package
 
 class TaskListScreen extends StatelessWidget {
   @override
@@ -16,7 +17,7 @@ class TaskListScreen extends StatelessWidget {
           },
         ),
       ),
-      body: Consumer<Task>(
+      body: Consumer<MaintenanceProvider>(
         builder: (context, provider, child) {
           return ListView.builder(
             itemCount: provider.tasks.length,
@@ -24,7 +25,9 @@ class TaskListScreen extends StatelessWidget {
               final task = provider.tasks[index];
               return ListTile(
                 title: Text(task.task),
-                subtitle: Text('Due: ${task.dueDate} - Mileage: ${task.mileage}'),
+                subtitle: Text(
+                  'Due: ${DateFormat('yyyy-MM-dd').format(task.dueDate)} - Mileage: ${task.mileage}',
+                ), // Format the due date
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -34,7 +37,10 @@ class TaskListScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => AddEditTaskScreen(task: task),
+                            builder: (context) => ChangeNotifierProvider.value(
+                              value: provider,
+                              child: AddEditTaskScreen(task: task),
+                            ),
                           ),
                         );
                       },
@@ -42,7 +48,7 @@ class TaskListScreen extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.delete),
                       onPressed: () {
-                        provider.deleteTask(task.taskID);
+                        provider.removeTask(task.taskID);
                       },
                     ),
                   ],
@@ -57,7 +63,10 @@ class TaskListScreen extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddEditTaskScreen(),
+              builder: (context) => ChangeNotifierProvider.value(
+                value: Provider.of<MaintenanceProvider>(context, listen: false),
+                child: AddEditTaskScreen(),
+              ),
             ),
           );
         },

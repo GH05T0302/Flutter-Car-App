@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:ggt_assignment/Maintenance/maintenance_task.dart';
 import 'package:provider/provider.dart';
+import 'package:ggt_assignment/Maintenance/maintenance_task.dart';
+import 'package:ggt_assignment/Maintenance/maintenance_provider.dart';
+import 'package:ggt_assignment/vehicleProvider.dart'; // Ensure this import is correct
 import 'package:intl/intl.dart'; 
-import 'package:ggt_assignment/Maintenance/class_task.dart';
-import 'package:uuid/uuid.dart'; // Import to generate unique IDs
+import 'package:uuid/uuid.dart'; 
 
 class AddEditTaskScreen extends StatefulWidget {
   final MaintenanceTask? task;
@@ -19,6 +20,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
   final _taskController = TextEditingController();
   final _mileageController = TextEditingController();
   DateTime _dueDate = DateTime.now();
+  String? _selectedVehicle;
 
   @override
   void initState() {
@@ -26,8 +28,15 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
     if (widget.task != null) {
       _taskController.text = widget.task!.task;
       _mileageController.text = widget.task!.mileage.toString();
-      _dueDate = widget.task!.dueDate;
+      _dueDate = DateTime(widget.task!.dueDate.year, widget.task!.dueDate.month, widget.task!.dueDate.day);
+      _selectedVehicle = widget.task!.vehicle;
     }
+    _fetchVehicles();
+  }
+
+  Future<void> _fetchVehicles() async {
+    final vehicleProvider = Provider.of<VehicleProvider>(context, listen: false);
+    await vehicleProvider.fetchVehicles();
   }
 
   Future<void> _selectDueDate(BuildContext context) async {
@@ -39,25 +48,26 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
     );
     if (picked != null && picked != _dueDate)
       setState(() {
-        _dueDate = picked;
+        _dueDate = DateTime(picked.year, picked.month, picked.day); 
       });
   }
 
   void _submit() {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && _selectedVehicle != null) {
       final task = MaintenanceTask(
         task: _taskController.text,
         taskID: widget.task?.taskID ?? Uuid().v4(),
         mileage: int.parse(_mileageController.text),
-        dueDate: _dueDate,
+        dueDate: DateTime(_dueDate.year, _dueDate.month, _dueDate.day),
+        vehicle: _selectedVehicle!,
       );
 
-      final provider = Provider.of<Task>(context, listen: false);
+      final provider = Provider.of<MaintenanceProvider>(context, listen: false);
 
       if (widget.task == null) {
         provider.addTask(task);
       } else {
-        provider.updateTask(task);
+        provider.updateTask(widget.task!, task);
       }
 
       Navigator.of(context).pop();
@@ -76,10 +86,36 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
           key: _formKey,
           child: Column(
             children: [
+              Consumer<VehicleProvider>(
+                builder: (context, vehicleProvider, child) {
+                  final vehicles = vehicleProvider.vehicles;
+                  return DropdownButtonFormField<String>(
+                    value: _selectedVehicle,
+                    decoration: InputDecoration(labelText: 'Select Vehicle'),
+                    items: vehicles.map((vehicle) {
+                      return DropdownMenuItem<String>(
+                        value: vehicle.model,
+                        child: Text(vehicle.model),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedVehicle = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Please select a vehicle';
+                      }
+                      return null;
+                    },
+                  );
+                },
+              ),
               TextFormField(
                 controller: _taskController,
                 decoration: InputDecoration(labelText: 'Task'),
-                                 validator: (value) {
+                validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a task';
                   }
@@ -129,4 +165,3 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
     super.dispose();
   }
 }
-
