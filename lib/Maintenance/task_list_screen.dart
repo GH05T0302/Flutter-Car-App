@@ -25,9 +25,13 @@ class TaskListScreen extends StatelessWidget {
               final task = provider.tasks[index];
               return ListTile(
                 title: Text(task.task),
-                subtitle: Text(
-                  'Due: ${DateFormat('yyyy-MM-dd').format(task.dueDate)} - Mileage: ${task.mileage}',
-                ), // Format the due date
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Due: ${DateFormat('yyyy-MM-dd').format(task.dueDate)} - Mileage: ${task.mileage}'),
+                    Text('Model: ${task.vehicle}'), // Add this line
+                  ],
+                ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

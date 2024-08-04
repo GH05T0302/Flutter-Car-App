@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ggt_assignment/History/service_log.dart';
-import 'package:ggt_assignment/Maintenance/maintenance_task.dart';
+import 'maintenance_task.dart';
 import 'package:ggt_assignment/History/service_provider.dart';
+import 'package:ggt_assignment/History/service_log.dart';
 
 class MaintenanceProvider with ChangeNotifier {
   final String userEmail;
@@ -40,8 +40,6 @@ class MaintenanceProvider with ChangeNotifier {
 
   Future<void> addTask(MaintenanceTask task) async {
     try {
-      print('Adding task: ${task.toMap()}');
-
       await FirebaseFirestore.instance
           .collection('maintenance')
           .doc(userEmail)
