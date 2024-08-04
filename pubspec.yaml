@@ -57,6 +57,7 @@ dependencies:
   http: ^1.2.2
   fluttertoast: ^8.2.6
   font_awesome_flutter: ^10.7.0
+  uuid: ^4.4.2
 
 dev_dependencies:
   flutter_test:
