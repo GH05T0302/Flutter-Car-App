@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ggt_assignment/Maintenance/maintenance_task.dart';
 import 'package:ggt_assignment/Maintenance/maintenance_provider.dart';
-import 'package:ggt_assignment/vehicleProvider.dart'; // Ensure this import is correct
-import 'package:intl/intl.dart'; 
-import 'package:uuid/uuid.dart'; 
+import 'package:ggt_assignment/vehicleProvider.dart';
+import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 class AddEditTaskScreen extends StatefulWidget {
   final MaintenanceTask? task;
@@ -48,7 +48,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
     );
     if (picked != null && picked != _dueDate)
       setState(() {
-        _dueDate = DateTime(picked.year, picked.month, picked.day); 
+        _dueDate = DateTime(picked.year, picked.month, picked.day);
       });
   }
 
@@ -60,6 +60,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
         mileage: int.parse(_mileageController.text),
         dueDate: DateTime(_dueDate.year, _dueDate.month, _dueDate.day),
         vehicle: _selectedVehicle!,
+        isCompleted: widget.task?.isCompleted ?? false,
       );
 
       final provider = Provider.of<MaintenanceProvider>(context, listen: false);
@@ -70,6 +71,14 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
         provider.updateTask(widget.task!, task);
       }
 
+      Navigator.of(context).pop();
+    }
+  }
+
+  void _completeTask() {
+    if (widget.task != null) {
+      final provider = Provider.of<MaintenanceProvider>(context, listen: false);
+      provider.completeTask(widget.task!);
       Navigator.of(context).pop();
     }
   }
@@ -151,6 +160,11 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
                 onPressed: _submit,
                 child: Text(widget.task == null ? 'Add Task' : 'Update Task'),
               ),
+              if (widget.task != null && !widget.task!.isCompleted)
+                ElevatedButton(
+                  onPressed: _completeTask,
+                  child: Text('Mark as Completed'),
+                ),
             ],
           ),
         ),

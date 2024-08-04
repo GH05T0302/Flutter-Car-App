@@ -1,18 +1,18 @@
-class MaintenanceTask {
+class ServiceLog {
   String task;
   String taskID;
   int mileage;
   DateTime dueDate;
   String vehicle;
-  bool isCompleted;
+  DateTime completedDate;
 
-  MaintenanceTask({
+  ServiceLog({
     required this.task,
     required this.taskID,
     required this.mileage,
     required this.dueDate,
     required this.vehicle,
-    this.isCompleted = false,  // Add default value for isCompleted
+    required this.completedDate,
   });
 
   Map<String, dynamic> toMap() {
@@ -22,18 +22,18 @@ class MaintenanceTask {
       'mileage': mileage,
       'dueDate': dueDate.toIso8601String(),
       'vehicle': vehicle,
-      'isCompleted': isCompleted,
+      'completedDate': completedDate.toIso8601String(),
     };
   }
 
-  factory MaintenanceTask.fromMap(Map<String, dynamic> map) {
-    return MaintenanceTask(
+  factory ServiceLog.fromMap(Map<String, dynamic> map) {
+    return ServiceLog(
       task: map['task'],
       taskID: map['taskID'],
       mileage: map['mileage'],
       dueDate: DateTime.parse(map['dueDate']),
       vehicle: map['vehicle'],
-      isCompleted: map['isCompleted'] ?? false,
+      completedDate: DateTime.parse(map['completedDate']),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ggt_assignment/Maintenance/task_list_screen.dart';
 import 'package:ggt_assignment/Screens/vehicleList.dart';
-
+import 'package:ggt_assignment/History/service_log_screen.dart';
 
 class Dashboard extends StatelessWidget {
   @override
@@ -185,7 +185,11 @@ class QuickAccessFeatures extends StatelessWidget {
           icon: Icons.build,
           label: 'Service Log',
           onPressed: () {
-            // Navigate to service log
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => ServiceLogScreen(),
+              ),
+            );
           },
         ),
         QuickAccessButton(

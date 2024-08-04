@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ggt_assignment/History/service_log.dart';
 import 'package:ggt_assignment/Maintenance/maintenance_task.dart';
+import 'package:ggt_assignment/History/service_provider.dart';
 
 class MaintenanceProvider with ChangeNotifier {
   final String userEmail;
+  final ServiceProvider serviceProvider;
 
-  MaintenanceProvider(this.userEmail) {
-    fetchTasks();  // Fetch tasks when the provider is created
+  MaintenanceProvider(this.userEmail, this.serviceProvider) {
+    fetchTasks();
   }
 
   List<MaintenanceTask> _tasks = [];
@@ -81,6 +84,49 @@ class MaintenanceProvider with ChangeNotifier {
       }
     } catch (error) {
       print('Error updating task: $error');
+    }
+  }
+
+  Future<void> completeTask(MaintenanceTask task) async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('maintenance')
+          .doc(userEmail)
+          .collection('userTasks')
+          .where('taskID', isEqualTo: task.taskID)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final docId = querySnapshot.docs[0].id;
+
+        // Add to service log
+        final serviceLog = ServiceLog(
+          task: task.task,
+          taskID: task.taskID,
+          mileage: task.mileage,
+          dueDate: task.dueDate,
+          vehicle: task.vehicle,
+          completedDate: DateTime.now(),
+        );
+        await serviceProvider.addServiceLog(serviceLog);
+
+        // Remove from maintenance tasks
+        await FirebaseFirestore.instance
+            .collection('maintenance')
+            .doc(userEmail)
+            .collection('userTasks')
+            .doc(docId)
+            .delete();
+
+        _tasks.remove(task);
+        notifyListeners();
+
+        print('Task marked as completed and moved to service log');
+      } else {
+        print('No matching document found to update');
+      }
+    } catch (error) {
+      print('Error completing task: $error');
     }
   }
 
