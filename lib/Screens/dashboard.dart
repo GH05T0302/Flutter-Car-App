@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ggt_assignment/Firebase_Auth/firebase_auth_services.dart';
+import 'package:ggt_assignment/Screens/login.dart';
 import 'package:ggt_assignment/themeProvider.dart';
 import 'package:ggt_assignment/widgets/customTextStyle.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +8,7 @@ import 'package:ggt_assignment/Maintenance/task_list_screen.dart';
 import 'package:ggt_assignment/Screens/vehicleList.dart';
 import 'package:ggt_assignment/History/service_log_screen.dart';
 import 'package:ggt_assignment/reminder/reminder_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Dashboard extends StatelessWidget {
   @override
@@ -315,6 +318,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
 }
 
 class SettingsScreen extends StatelessWidget {
+  final FirebaseAuthService _authService = FirebaseAuthService();
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -332,15 +337,38 @@ class SettingsScreen extends StatelessWidget {
               trailing: Switch(
                 value: themeProvider.isDarkMode,
                 onChanged: (value) {
-                  final provider =
-                      Provider.of<ThemeProvider>(context, listen: false);
+                  final provider = Provider.of<ThemeProvider>(context, listen: false);
                   provider.toggleTheme(value);
                 },
               ),
             ),
+            ListTile(
+              title: Text('Logout'),
+              trailing: Icon(Icons.logout),
+              onTap: () async {
+                await _logout(context);
+              },
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _logout(BuildContext context) async {
+    // Clear saved credentials
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('email');
+    await prefs.remove('password');
+
+    // Sign out from Firebase
+    await _authService.signOut();
+
+    // Navigate to login page
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+      (route) => false,
     );
   }
 }

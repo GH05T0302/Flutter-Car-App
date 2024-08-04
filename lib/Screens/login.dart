@@ -5,8 +5,7 @@ import 'package:ggt_assignment/Screens/SignUp.dart';
 import 'package:ggt_assignment/widgets/container_widget.dart';
 import 'package:ggt_assignment/toast.dart';
 import 'package:ggt_assignment/widgets/customTextStyle.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,10 +16,17 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _isSigning = false;
+  bool _rememberMe = false;
   final FirebaseAuthService _auth = FirebaseAuthService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkSavedCredentials();
+  }
 
   @override
   void dispose() {
@@ -29,13 +35,24 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  void _checkSavedCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedEmail = prefs.getString('email');
+    final savedPassword = prefs.getString('password');
+
+    if (savedEmail != null && savedPassword != null) {
+      _emailController.text = savedEmail;
+      _passwordController.text = savedPassword;
+      _rememberMe = true;
+      _signIn(shouldShowLoading: false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final textStyle = getCustomTextStyle(context);
     final buttonTextStyle = TextStyle(color: Theme.of(context).colorScheme.onPrimary);
     final buttonBackgroundColor = Theme.of(context).colorScheme.primary;
-    final googleButtonBackgroundColor = Colors.red;
-    final googleButtonTextStyle = TextStyle(color: Colors.white);
     final linkTextStyle = TextStyle(color: Theme.of(context).colorScheme.primary);
     final titleTextStyle = Theme.of(context).textTheme.headlineSmall?.copyWith(color: Theme.of(context).colorScheme.onSurface);
 
@@ -71,7 +88,19 @@ class _LoginPageState extends State<LoginPage> {
                 isPasswordField: true,
               ),
               const SizedBox(
-                height: 30,
+                height: 10,
+              ),
+              CheckboxListTile(
+                title: Text("Remember Me", style: textStyle),
+                value: _rememberMe,
+                onChanged: (bool? value) {
+                  setState(() {
+                    _rememberMe = value ?? false;
+                  });
+                },
+              ),
+              const SizedBox(
+                height: 10,
               ),
               GestureDetector(
                 onTap: () {
@@ -93,40 +122,6 @@ class _LoginPageState extends State<LoginPage> {
                             "Login",
                             style: buttonTextStyle,
                           ),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              GestureDetector(
-                onTap: () {
-                  _signInWithGoogle();
-                },
-                child: Container(
-                  width: double.infinity,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    color: googleButtonBackgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          FontAwesomeIcons.google,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          "Sign in with Google",
-                          style: googleButtonTextStyle,
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ),
@@ -164,47 +159,38 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _signIn() async {
-    setState(() {
-      _isSigning = true;
-    });
+  void _signIn({bool shouldShowLoading = true}) async {
+    if (shouldShowLoading) {
+      setState(() {
+        _isSigning = true;
+      });
+    }
 
     String email = _emailController.text;
     String password = _passwordController.text;
 
     User? user = await _auth.signInWithEmailAndPassword(email, password);
 
-    setState(() {
-      _isSigning = false;
-    });
+    if (shouldShowLoading) {
+      setState(() {
+        _isSigning = false;
+      });
+    }
 
     if (user != null) {
+      if (_rememberMe) {
+        _saveUserCredentials(email, password);
+      }
       showToast(message: "User is successfully signed in");
       Navigator.pushNamed(context, "/Dashboard");
     } else {
-      showToast(message: "some error occurred");
+      showToast(message: "Some error occurred");
     }
   }
 
-  _signInWithGoogle() async {
-    final GoogleSignIn googleSignIn = GoogleSignIn();
-
-    try {
-      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
-
-      if (googleSignInAccount != null) {
-        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
-
-        final AuthCredential credential = GoogleAuthProvider.credential(
-          idToken: googleSignInAuthentication.idToken,
-          accessToken: googleSignInAuthentication.accessToken,
-        );
-
-        await _firebaseAuth.signInWithCredential(credential);
-        Navigator.pushNamed(context, "/Dashboard");
-      }
-    } catch (e) {
-      showToast(message: "some error occurred $e");
-    }
+  void _saveUserCredentials(String email, String password) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', email);
+    await prefs.setString('password', password);
   }
 }
