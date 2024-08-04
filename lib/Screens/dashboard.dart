@@ -136,7 +136,7 @@ class UpcomingMaintenanceTasks extends StatelessWidget {
           children: [
             Text(
               'Upcoming Maintenance Tasks',
-              style: Theme.of(context).textTheme.headline6?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
             ),
             SizedBox(height: 10),
             MaintenanceTaskItem(
