@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ggt_assignment/themeProvider.dart';
+import 'package:ggt_assignment/widgets/customTextStyle.dart';
+import 'package:provider/provider.dart';
 import 'package:ggt_assignment/Maintenance/task_list_screen.dart';
 import 'package:ggt_assignment/Screens/vehicleList.dart';
 import 'package:ggt_assignment/History/service_log_screen.dart';
@@ -10,11 +13,13 @@ class Dashboard extends StatelessWidget {
       appBar: AppBar(
         title: Text('Dashboard'),
         actions: [
-          IconButton(
+          PopupMenuButton<int>(
             icon: Icon(Icons.account_circle),
-            onPressed: () {
-              // Navigate to user profile
-            },
+            onSelected: (item) => onSelected(context, item),
+            itemBuilder: (context) => [
+              PopupMenuItem<int>(value: 0, child: Text('Profile')),
+              PopupMenuItem<int>(value: 1, child: Text('Settings')),
+            ],
           ),
           IconButton(
             icon: Icon(Icons.menu),
@@ -48,6 +53,21 @@ class Dashboard extends StatelessWidget {
       bottomNavigationBar: CustomBottomNavigationBar(),
     );
   }
+
+  void onSelected(BuildContext context, int item) {
+    switch (item) {
+      case 0:
+        // Navigate to user profile
+        break;
+      case 1:
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => SettingsScreen(),
+          ),
+        );
+        break;
+    }
+  }
 }
 
 class SearchBar extends StatelessWidget {
@@ -64,7 +84,6 @@ class SearchBar extends StatelessWidget {
     );
   }
 }
-
 class VehicleSummary extends StatelessWidget {
   final String make;
   final String model;
@@ -80,6 +99,8 @@ class VehicleSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textStyle = getCustomTextStyle(context);
+
     return Card(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -88,13 +109,13 @@ class VehicleSummary extends StatelessWidget {
           children: [
             Text(
               'Vehicle Summary',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.headline6?.copyWith(color: Theme.of(context).colorScheme.onSurface),
             ),
             SizedBox(height: 10),
-            Text('Make: $make'),
-            Text('Model: $model'),
-            Text('Year: $year'),
-            Text('Mileage: $mileage km'),
+            Text('Make: $make', style: textStyle),
+            Text('Model: $model', style: textStyle),
+            Text('Year: $year', style: textStyle),
+            Text('Mileage: $mileage km', style: textStyle),
           ],
         ),
       ),
@@ -105,6 +126,8 @@ class VehicleSummary extends StatelessWidget {
 class UpcomingMaintenanceTasks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final textStyle = getCustomTextStyle(context);
+
     return Card(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -113,18 +136,20 @@ class UpcomingMaintenanceTasks extends StatelessWidget {
           children: [
             Text(
               'Upcoming Maintenance Tasks',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.headline6?.copyWith(color: Theme.of(context).colorScheme.onSurface),
             ),
             SizedBox(height: 10),
             MaintenanceTaskItem(
               task: 'Oil Change',
               dueDate: '2024-08-15',
               mileage: 16000,
+              textStyle: textStyle,
             ),
             MaintenanceTaskItem(
               task: 'Tire Rotation',
               dueDate: '2024-09-01',
               mileage: 17000,
+              textStyle: textStyle,
             ),
           ],
         ),
@@ -137,11 +162,13 @@ class MaintenanceTaskItem extends StatelessWidget {
   final String task;
   final String dueDate;
   final int mileage;
+  final TextStyle textStyle;
 
   MaintenanceTaskItem({
     required this.task,
     required this.dueDate,
     required this.mileage,
+    required this.textStyle,
   });
 
   @override
@@ -151,12 +178,12 @@ class MaintenanceTaskItem extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(task),
+          Text(task, style: textStyle),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('Due Date: $dueDate'),
-              Text('Mileage: $mileage km'),
+              Text('Due Date: $dueDate', style: textStyle),
+              Text('Mileage: $mileage km', style: textStyle),
             ],
           ),
         ],
@@ -271,6 +298,37 @@ class CustomBottomNavigationBar extends StatelessWidget {
             break;
         }
       },
+    );
+  }
+}
+
+class SettingsScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Settings'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            ListTile(
+              title: Text('Dark Mode'),
+              trailing: Switch(
+                value: themeProvider.isDarkMode,
+                onChanged: (value) {
+                  final provider =
+                      Provider.of<ThemeProvider>(context, listen: false);
+                  provider.toggleTheme(value);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

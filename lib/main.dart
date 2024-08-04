@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:ggt_assignment/Firebase_Auth/auth_provider.dart';
-import 'package:ggt_assignment/Maintenance/maintenance_provider.dart';
-import 'package:ggt_assignment/Maintenance/task_list_screen.dart';
+import 'package:ggt_assignment/themeProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+import 'package:ggt_assignment/Firebase_Auth/auth_provider.dart';
+import 'package:ggt_assignment/Maintenance/maintenance_provider.dart';
+import 'package:ggt_assignment/Maintenance/task_list_screen.dart';
 import 'package:ggt_assignment/Screens/vehicleList.dart';
 import 'package:ggt_assignment/Screens/login.dart';
 import 'package:ggt_assignment/Screens/dashboard.dart';
@@ -12,10 +14,20 @@ import 'package:ggt_assignment/vehicleProvider.dart';
 import 'package:ggt_assignment/History/service_provider.dart';
 import 'package:ggt_assignment/History/service_log_screen.dart';
 
-final theme = ThemeData(
+
+final lightTheme = ThemeData(
   useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(
     brightness: Brightness.light,
+    seedColor: const Color.fromARGB(255, 209, 44, 3),
+  ),
+  textTheme: GoogleFonts.latoTextTheme(),
+);
+
+final darkTheme = ThemeData(
+  useMaterial3: true,
+  colorScheme: ColorScheme.fromSeed(
+    brightness: Brightness.dark,
     seedColor: const Color.fromARGB(255, 209, 44, 3),
   ),
   textTheme: GoogleFonts.latoTextTheme(),
@@ -29,6 +41,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
       child: const MyApp(),
     ),
@@ -40,6 +53,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Consumer<AuthProvider>(
       builder: (context, authProvider, child) {
         final userEmail = authProvider.user?.email ?? '';
@@ -59,7 +74,9 @@ class MyApp extends StatelessWidget {
             ),
           ],
           child: MaterialApp(
-            theme: theme,
+            themeMode: themeProvider.themeMode,
+            theme: lightTheme,
+            darkTheme: darkTheme,
             initialRoute: '/',
             routes: {
               '/': (context) => LoginPage(),
