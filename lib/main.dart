@@ -3,6 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 import 'package:ggt_assignment/Firebase_Auth/auth_provider.dart';
 import 'package:ggt_assignment/Maintenance/maintenance_provider.dart';
 import 'package:ggt_assignment/Maintenance/task_list_screen.dart';
@@ -15,6 +17,9 @@ import 'package:ggt_assignment/History/service_log_screen.dart';
 import 'package:ggt_assignment/reminder/reminder_provider.dart';
 import 'package:ggt_assignment/reminder/reminder_screen.dart';
 import 'package:ggt_assignment/themeProvider.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 final lightTheme = ThemeData(
   useMaterial3: true,
@@ -39,11 +44,20 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print('Handling a background message: ${message.messageId}');
 }
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   runApp(
     MultiProvider(

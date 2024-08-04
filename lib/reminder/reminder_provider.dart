@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:ggt_assignment/Maintenance/maintenance_task.dart';
+import 'package:ggt_assignment/main.dart'; // Ensure you import main.dart to access flutterLocalNotificationsPlugin
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class ReminderProvider with ChangeNotifier {
   final String userEmail;
@@ -10,6 +14,7 @@ class ReminderProvider with ChangeNotifier {
   ReminderProvider(this.userEmail) {
     fetchReminders();
     _initFirebaseMessaging();
+    tz.initializeTimeZones();
   }
 
   List<MaintenanceTask> _reminders = [];
@@ -64,10 +69,46 @@ class ReminderProvider with ChangeNotifier {
         return MaintenanceTask.fromMap(data);
       }).toList();
 
+      // Schedule notifications for reminders due in a week
+      for (var reminder in _reminders) {
+        final dueDate = reminder.dueDate;
+        final scheduledDate = dueDate.subtract(Duration(days: 7));
+
+        if (scheduledDate.isAfter(DateTime.now())) {
+          _scheduleNotification(reminder, scheduledDate);
+        }
+      }
+
       notifyListeners();
     } catch (error) {
       print('Error fetching reminders: $error');
     }
+  }
+
+  Future<void> _scheduleNotification(MaintenanceTask task, DateTime scheduledDate) async {
+    final androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your_channel_id',
+      'your_channel_name',
+      channelDescription: 'your_channel_description',
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: false,
+    );
+    final platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      task.hashCode,
+      'Maintenance Reminder',
+      'Your task "${task.task}" is due in a week.',
+      tz.TZDateTime.from(scheduledDate, tz.local),
+      platformChannelSpecifics,
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
   }
 
   Future<void> snoozeReminder(MaintenanceTask task, Duration snoozeDuration) async {
