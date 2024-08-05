@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ggt_assignment/model/vehicle.dart';
-import 'package:ggt_assignment/vehicleProvider.dart';
+import 'package:ggt_assignment/providers/vehicleProvider.dart';
 
 import '../Firebase_Auth/auth_provider.dart';
 

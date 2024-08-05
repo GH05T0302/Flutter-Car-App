@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ggt_assignment/Firebase_Auth/firebase_auth_services.dart';
 import 'package:ggt_assignment/Screens/changePasswordScreen.dart';
 import 'package:ggt_assignment/Screens/login.dart';
-import 'package:ggt_assignment/themeProvider.dart';
+import 'package:ggt_assignment/providers/themeProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

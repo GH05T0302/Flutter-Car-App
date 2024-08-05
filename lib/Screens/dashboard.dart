@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:ggt_assignment/Firebase_Auth/auth_provider.dart';
 import 'package:ggt_assignment/Screens/login.dart';
 import 'package:ggt_assignment/Screens/settingsScreen.dart';
-import 'package:ggt_assignment/themeProvider.dart';
+import 'package:ggt_assignment/providers/themeProvider.dart';
 import 'package:ggt_assignment/widgets/customTextStyle.dart';
 import 'package:provider/provider.dart';
-import 'package:ggt_assignment/Maintenance/task_list_screen.dart';
+import 'package:ggt_assignment/Screens/task_list_screen.dart';
 import 'package:ggt_assignment/Screens/vehicleList.dart';
-import 'package:ggt_assignment/History/service_log_screen.dart';
-import 'package:ggt_assignment/reminder/reminder_screen.dart';
+import 'package:ggt_assignment/Screens/service_log_screen.dart';
+import 'package:ggt_assignment/Screens/reminder_screen.dart';
 import 'package:ggt_assignment/Screens/ProfileScreen.dart';
-import 'package:ggt_assignment/vehicleProvider.dart';
-import 'package:ggt_assignment/Maintenance/maintenance_provider.dart';
+import 'package:ggt_assignment/providers/vehicleProvider.dart';
+import 'package:ggt_assignment/providers/maintenance_provider.dart';
 import 'package:intl/intl.dart';
 
 class Dashboard extends StatelessWidget {
