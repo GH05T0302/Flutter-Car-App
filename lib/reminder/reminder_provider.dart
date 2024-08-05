@@ -69,12 +69,16 @@ class ReminderProvider with ChangeNotifier {
         return MaintenanceTask.fromMap(data);
       }).toList();
 
-      // Schedule notifications for reminders due in a week
+      // Schedule notifications for reminders due in a week or less
       for (var reminder in _reminders) {
         final dueDate = reminder.dueDate;
         final scheduledDate = dueDate.subtract(Duration(days: 7));
+        final now = DateTime.now();
 
-        if (scheduledDate.isAfter(DateTime.now())) {
+        if (scheduledDate.isBefore(now)) {
+          // If the scheduled date is in the past, schedule the notification immediately
+          _scheduleNotification(reminder, now.add(Duration(minutes: 1)));
+        } else {
           _scheduleNotification(reminder, scheduledDate);
         }
       }
@@ -88,8 +92,8 @@ class ReminderProvider with ChangeNotifier {
   Future<void> _scheduleNotification(MaintenanceTask task, DateTime scheduledDate) async {
     final androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'your_channel_id',
-      'your_channel_name',
-      channelDescription: 'your_channel_description',
+      'Service Reminders',
+      channelDescription: 'Channel for service reminders',
       importance: Importance.max,
       priority: Priority.high,
       showWhen: false,
@@ -100,13 +104,12 @@ class ReminderProvider with ChangeNotifier {
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
       task.hashCode,
-      'Maintenance Reminder',
-      'Your task "${task.task}" is due in a week.',
+      'Service Reminder',
+      'Your task "${task.task}" is due on ${task.dueDate.toIso8601String().split('T').first}.',
       tz.TZDateTime.from(scheduledDate, tz.local),
       platformChannelSpecifics,
       androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
   }
