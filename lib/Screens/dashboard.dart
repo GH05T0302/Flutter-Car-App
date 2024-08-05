@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ggt_assignment/Firebase_Auth/firebase_auth_services.dart';
 import 'package:ggt_assignment/Screens/login.dart';
+import 'package:ggt_assignment/Screens/settingsScreen.dart';
 import 'package:ggt_assignment/themeProvider.dart';
 import 'package:ggt_assignment/widgets/customTextStyle.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +9,7 @@ import 'package:ggt_assignment/Maintenance/task_list_screen.dart';
 import 'package:ggt_assignment/Screens/vehicleList.dart';
 import 'package:ggt_assignment/History/service_log_screen.dart';
 import 'package:ggt_assignment/reminder/reminder_screen.dart';
+import 'package:ggt_assignment/Screens/ProfileScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Dashboard extends StatelessWidget {
@@ -55,7 +57,11 @@ class Dashboard extends StatelessWidget {
   void onSelected(BuildContext context, int item) {
     switch (item) {
       case 0:
-        // Navigate to user profile
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ProfileScreen(),
+          ),
+        );
         break;
       case 1:
         Navigator.of(context).push(
@@ -278,62 +284,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
             break;
         }
       },
-    );
-  }
-}
-
-class SettingsScreen extends StatelessWidget {
-  final FirebaseAuthService _authService = FirebaseAuthService();
-
-  @override
-  Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Settings'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            ListTile(
-              title: Text('Dark Mode'),
-              trailing: Switch(
-                value: themeProvider.isDarkMode,
-                onChanged: (value) {
-                  final provider = Provider.of<ThemeProvider>(context, listen: false);
-                  provider.toggleTheme(value);
-                },
-              ),
-            ),
-            ListTile(
-              title: Text('Logout'),
-              trailing: Icon(Icons.logout),
-              onTap: () async {
-                await _logout(context);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _logout(BuildContext context) async {
-    // Clear saved credentials
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('email');
-    await prefs.remove('password');
-
-    // Sign out from Firebase
-    await _authService.signOut();
-
-    // Navigate to login page
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => LoginPage()),
-      (route) => false,
     );
   }
 }
