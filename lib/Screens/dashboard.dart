@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ggt_assignment/Firebase_Auth/firebase_auth_services.dart';
+import 'package:ggt_assignment/Firebase_Auth/auth_provider.dart';
 import 'package:ggt_assignment/Screens/login.dart';
 import 'package:ggt_assignment/Screens/settingsScreen.dart';
 import 'package:ggt_assignment/themeProvider.dart';
@@ -10,11 +10,23 @@ import 'package:ggt_assignment/Screens/vehicleList.dart';
 import 'package:ggt_assignment/History/service_log_screen.dart';
 import 'package:ggt_assignment/reminder/reminder_screen.dart';
 import 'package:ggt_assignment/Screens/ProfileScreen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ggt_assignment/vehicleProvider.dart';
+import 'package:ggt_assignment/Maintenance/maintenance_provider.dart';
+import 'package:intl/intl.dart';
 
 class Dashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    final vehicleProvider = Provider.of<VehicleProvider>(context);
+    final maintenanceProvider = Provider.of<MaintenanceProvider>(context);
+
+    // Fetch vehicles and maintenance tasks for the current user
+    if (authProvider.user != null) {
+      vehicleProvider.fetchVehicles();
+      maintenanceProvider.fetchTasks();
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Dashboard'),
@@ -36,14 +48,9 @@ class Dashboard extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(height: 20),
-              VehicleSummary(
-                make: 'Toyota',
-                model: 'Camry',
-                year: 2020,
-                mileage: 15000,
-              ),
+              VehicleSummary(vehicleProvider: vehicleProvider),
               SizedBox(height: 20),
-              UpcomingMaintenanceTasks(),
+              UpcomingMaintenanceTasks(maintenanceProvider: maintenanceProvider),
               SizedBox(height: 20),
               QuickAccessFeatures(),
             ],
@@ -75,21 +82,29 @@ class Dashboard extends StatelessWidget {
 }
 
 class VehicleSummary extends StatelessWidget {
-  final String make;
-  final String model;
-  final int year;
-  final int mileage;
+  final VehicleProvider vehicleProvider;
 
-  VehicleSummary({
-    required this.make,
-    required this.model,
-    required this.year,
-    required this.mileage,
-  });
+  VehicleSummary({required this.vehicleProvider});
 
   @override
   Widget build(BuildContext context) {
     final textStyle = getCustomTextStyle(context);
+
+    // Check if there are any vehicles
+    if (vehicleProvider.vehicles.isEmpty) {
+      return Card(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text(
+            'No vehicles found. Please add your vehicles.',
+            style: textStyle,
+          ),
+        ),
+      );
+    }
+
+    // Display the details of the first vehicle (or change this logic as needed)
+    final vehicle = vehicleProvider.vehicles.first;
 
     return Card(
       child: Padding(
@@ -98,14 +113,14 @@ class VehicleSummary extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Vehicle Summary',
+              'Main Vehicle Summary',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
             ),
             SizedBox(height: 10),
-            Text('Make: $make', style: textStyle),
-            Text('Model: $model', style: textStyle),
-            Text('Year: $year', style: textStyle),
-            Text('Mileage: $mileage km', style: textStyle),
+            Text('Make: ${vehicle.make}', style: textStyle),
+            Text('Model: ${vehicle.model}', style: textStyle),
+            Text('Year: ${vehicle.year}', style: textStyle),
+            Text('Mileage: ${vehicle.mileage} km', style: textStyle),
           ],
         ),
       ),
@@ -114,9 +129,25 @@ class VehicleSummary extends StatelessWidget {
 }
 
 class UpcomingMaintenanceTasks extends StatelessWidget {
+  final MaintenanceProvider maintenanceProvider;
+
+  UpcomingMaintenanceTasks({required this.maintenanceProvider});
+
   @override
   Widget build(BuildContext context) {
     final textStyle = getCustomTextStyle(context);
+
+    if (maintenanceProvider.tasks.isEmpty) {
+      return Card(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text(
+            'No upcoming maintenance tasks found.',
+            style: textStyle,
+          ),
+        ),
+      );
+    }
 
     return Card(
       child: Padding(
@@ -129,17 +160,15 @@ class UpcomingMaintenanceTasks extends StatelessWidget {
               style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
             ),
             SizedBox(height: 10),
-            MaintenanceTaskItem(
-              task: 'Oil Change',
-              dueDate: '2024-08-15',
-              mileage: 16000,
-              textStyle: textStyle,
-            ),
-            MaintenanceTaskItem(
-              task: 'Tire Rotation',
-              dueDate: '2024-09-01',
-              mileage: 17000,
-              textStyle: textStyle,
+            Column(
+              children: maintenanceProvider.tasks.map((task) {
+                return MaintenanceTaskItem(
+                  task: task.task,
+                  dueDate: DateFormat('yyyy-MM-dd').format(task.dueDate),
+                  mileage: task.mileage,
+                  textStyle: textStyle,
+                );
+              }).toList(),
             ),
           ],
         ),
