@@ -6,17 +6,17 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:ggt_assignment/Firebase_Auth/auth_provider.dart';
-import 'package:ggt_assignment/Maintenance/maintenance_provider.dart';
-import 'package:ggt_assignment/Maintenance/task_list_screen.dart';
+import 'package:ggt_assignment/providers/maintenance_provider.dart';
+import 'package:ggt_assignment/Screens/task_list_screen.dart';
 import 'package:ggt_assignment/Screens/vehicleList.dart';
 import 'package:ggt_assignment/Screens/login.dart';
 import 'package:ggt_assignment/Screens/dashboard.dart';
-import 'package:ggt_assignment/vehicleProvider.dart';
-import 'package:ggt_assignment/History/service_provider.dart';
-import 'package:ggt_assignment/History/service_log_screen.dart';
-import 'package:ggt_assignment/reminder/reminder_provider.dart';
-import 'package:ggt_assignment/reminder/reminder_screen.dart';
-import 'package:ggt_assignment/themeProvider.dart';
+import 'package:ggt_assignment/providers/vehicleProvider.dart';
+import 'package:ggt_assignment/providers/service_provider.dart';
+import 'package:ggt_assignment/Screens/service_log_screen.dart';
+import 'package:ggt_assignment/providers/reminder_provider.dart';
+import 'package:ggt_assignment/Screens/reminder_screen.dart';
+import 'package:ggt_assignment/providers/themeProvider.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
