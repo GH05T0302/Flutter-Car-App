@@ -40,4 +40,13 @@ class FirebaseAuthService {
       showToast(message: 'An error occurred while signing out: $e');
     }
   }
+
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      showToast(message: 'Password reset email sent.');
+    } on FirebaseAuthException catch (e) {
+      showToast(message: 'An error occurred: ${e.code}');
+    }
+  }
 }

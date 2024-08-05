@@ -1,11 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ggt_assignment/Firebase_Auth/firebase_auth_services.dart';
 import 'package:ggt_assignment/Screens/SignUp.dart';
 import 'package:ggt_assignment/widgets/container_widget.dart';
 import 'package:ggt_assignment/toast.dart';
 import 'package:ggt_assignment/widgets/customTextStyle.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -126,6 +127,16 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(
+                height: 10,
+              ),
+              TextButton(
+                onPressed: _showForgotPasswordDialog,
+                child: Text(
+                  "Forgot Password?",
+                  style: linkTextStyle,
+                ),
+              ),
+              const SizedBox(
                 height: 20,
               ),
               Row(
@@ -186,6 +197,41 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       showToast(message: "Some error occurred");
     }
+  }
+
+  void _showForgotPasswordDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final TextEditingController emailController = TextEditingController();
+        return AlertDialog(
+          title: Text("Forgot Password"),
+          content: TextField(
+            controller: emailController,
+            decoration: InputDecoration(hintText: "Enter your email"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                if (emailController.text.isNotEmpty) {
+                  await _auth.sendPasswordResetEmail(emailController.text);
+                  Navigator.of(context).pop();
+                } else {
+                  showToast(message: "Please enter an email address.");
+                }
+              },
+              child: Text("Send"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancel"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _saveUserCredentials(String email, String password) async {
