@@ -16,6 +16,7 @@ class Dashboard extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Dashboard'),
+        automaticallyImplyLeading: false,
         actions: [
           PopupMenuButton<int>(
             icon: Icon(Icons.account_circle),
@@ -32,7 +33,6 @@ class Dashboard extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SearchBar(),
               SizedBox(height: 20),
               VehicleSummary(
                 make: 'Toyota',
@@ -65,21 +65,6 @@ class Dashboard extends StatelessWidget {
         );
         break;
     }
-  }
-}
-
-class SearchBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      decoration: InputDecoration(
-        hintText: 'Search...',
-        prefixIcon: Icon(Icons.search),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-      ),
-    );
   }
 }
 
